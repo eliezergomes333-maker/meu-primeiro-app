@@ -1,0 +1,252 @@
+/* Reset básico e tipografia */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #121212, #1a1a1a);
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: flex-start; /* Alinhado à esquerda para permitir rolagem */
+    align-items: flex-start; /* Alinhado ao topo */
+    padding: 40px;
+    overflow-x: auto; /* Rolagem horizontal se necessário */
+}
+
+/* Glassmorphism e Container Principal */
+.app-container {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    width: auto;
+    min-width: min-content; /* Se adapta ao conteúdo das colunas */
+    margin: 0 auto;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #2ecc71; /* Verde destaque */
+    margin-bottom: 5px;
+    text-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+}
+
+header p {
+    font-size: 16px;
+    color: #a0a0a0;
+}
+
+/* Blocos dos Dias (Colunas Kanban) */
+.days-container {
+    display: flex;
+    flex-direction: row; /* Colunas lado a lado */
+    gap: 20px;
+}
+
+.calendar-wrapper {
+    margin-top: 0px;
+    margin-bottom: 40px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.day-block {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    width: 280px; /* Largura fixa para cada coluna */
+    min-height: 500px; /* Altura mínima para dar forma à coluna */
+    display: flex;
+    flex-direction: column;
+}
+
+.cal-day-name {
+    color: #2ecc71;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.day-header {
+    color: #2ecc71;
+    font-size: 16px;
+    margin-bottom: 15px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+/* Área de Input no rodapé da Coluna */
+.column-input-area {
+    display: flex;
+    gap: 10px;
+    margin-top: auto; /* Joga para o final da coluna */
+    padding-top: 15px;
+}
+
+.column-input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.column-input:focus {
+    border-color: #2ecc71;
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
+}
+
+.column-btn {
+    background: #2ecc71;
+    color: #121212;
+    border: none;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.column-btn:hover {
+    background: #27ae60;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+}
+
+.column-btn:active {
+    transform: scale(0.95);
+}
+
+/* Lista de Tarefas */
+.task-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.task-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    animation: slideIn 0.3s ease forwards;
+}
+
+.task-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Estado da Tarefa (Texto) */
+.task-content {
+    flex: 1;
+    font-size: 14px;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.task-item.completed .task-content {
+    text-decoration: line-through;
+    color: #555;
+}
+
+/* Botões da Tarefa (Update e Delete) */
+.task-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-icon {
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.2s, color 0.2s;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-check {
+    color: #a0a0a0;
+}
+
+.btn-check:hover {
+    color: #2ecc71;
+    background: rgba(46, 204, 113, 0.1);
+    transform: scale(1.1);
+}
+
+.task-item.completed .btn-check {
+    color: #2ecc71;
+}
+
+.btn-delete {
+    color: #e74c3c;
+}
+
+.btn-delete:hover {
+    color: #c0392b;
+    background: rgba(231, 76, 60, 0.1);
+    transform: scale(1.1);
+}
+
+/* Mensagem Vazia */
+.empty-msg {
+    text-align: center;
+    color: #555;
+    font-size: 12px;
+    margin-top: 20px;
+    font-style: italic;
+}
+
+/* Animações */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
