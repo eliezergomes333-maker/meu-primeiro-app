@@ -4,8 +4,9 @@ const ORDEM_DIAS = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado",
 let tarefas = [];
 
 // === CONFIGURAÇÃO DO BANCO DE DADOS NA NUVEM (GITHUB) ===
-const GITHUB_TOKEN = 'COLOQUE_SEU_TOKEN_AQUI';
-const GIST_ID = '1a770279fd1bd8196cfe36e757a3b170';
+// As credenciais ficam no arquivo config.js (que não vai para o GitHub)
+const GITHUB_TOKEN = CONFIG.GITHUB_TOKEN;
+const GIST_ID = CONFIG.GIST_ID;
 
 // Função para buscar os dados na nuvem quando o app abre
 async function carregarBancoDeDados() {
