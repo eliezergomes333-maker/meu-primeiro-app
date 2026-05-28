@@ -24,6 +24,22 @@
         </div>
     </div>
 
+    <!-- Polyfill para Drag and Drop no Mobile -->
+    <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-beta.2/index.min.js"></script>
+    <script>
+        // Inicializa o Polyfill para telas de toque
+        MobileDragDrop.polyfill({
+            dragImageTranslateOverride: MobileDragDrop.scrollBehaviourDragImageTranslateOverride
+        });
+
+        // Bloqueia a rolagem da tela no mobile enquanto está arrastando
+        window.addEventListener('touchmove', function(e) {
+            if (document.querySelector('.dragging')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+
     <!-- Configurações secretas (não vai pro GitHub) -->
     <script src="config.js"></script>
     <!-- Nosso "Banco de Dados" e Lógica -->

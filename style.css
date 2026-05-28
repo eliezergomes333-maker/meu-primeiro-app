@@ -302,3 +302,33 @@ header p {
         transform: scale(1);
     }
 }
+
+/* =========================================
+   RESPONSIVIDADE (MOBILE)
+   ========================================= */
+@media (max-width: 768px) {
+    body {
+        padding: 20px 10px;
+        flex-direction: column;
+        align-items: center;
+        overflow-x: hidden;
+    }
+
+    .app-container {
+        width: 100%;
+        padding: 20px 15px;
+    }
+
+    .days-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .day-block {
+        width: 100%;
+        max-width: 400px;
+        min-height: auto;
+        padding-bottom: 20px;
+    }
+}
