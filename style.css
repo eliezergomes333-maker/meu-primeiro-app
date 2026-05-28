@@ -64,6 +64,55 @@ header p {
     letter-spacing: 1px;
 }
 
+/* Barra de Navegação do Calendário */
+.calendar-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px 20px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.calendar-nav h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    min-width: 280px;
+    text-align: center;
+}
+
+.btn-nav {
+    background: rgba(255, 255, 255, 0.05);
+    color: #2ecc71;
+    border: 1px solid rgba(46, 204, 113, 0.2);
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-nav:hover {
+    background: #2ecc71;
+    color: #121212;
+    transform: scale(1.05);
+}
+
+.date-picker {
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px;
+    border-radius: 8px;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+}
+
 /* Blocos dos Dias (Colunas Kanban) */
 .days-container {
     display: flex;

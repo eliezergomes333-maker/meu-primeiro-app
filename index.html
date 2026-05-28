@@ -18,6 +18,16 @@
             <div id="relogioContainer" class="relogio">--:--:--</div>
         </header>
 
+        <!-- Barra de Navegação do Calendário -->
+        <div class="calendar-nav">
+            <button id="btnSemanaAnterior" class="btn-nav" title="Semana Anterior"><i class="fas fa-chevron-left"></i></button>
+            <h2 id="tituloSemana">Carregando semana...</h2>
+            <button id="btnProximaSemana" class="btn-nav" title="Próxima Semana"><i class="fas fa-chevron-right"></i></button>
+            <div class="date-picker-container">
+                <input type="date" id="inputEscolherData" class="date-picker">
+            </div>
+        </div>
+
         <!-- READ, UPDATE, DELETE: Lista onde as tarefas aparecerão -->
         <div id="daysContainer" class="days-container">
             <!-- Os blocos de cada dia serão injetados aqui pelo JavaScript -->

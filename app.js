@@ -1,7 +1,11 @@
 const daysContainer = document.getElementById('daysContainer');
+const btnSemanaAnterior = document.getElementById('btnSemanaAnterior');
+const btnProximaSemana = document.getElementById('btnProximaSemana');
+const tituloSemana = document.getElementById('tituloSemana');
+const inputEscolherData = document.getElementById('inputEscolherData');
 
-const ORDEM_DIAS = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 let tarefas = [];
+let dataAtualVisivel = new Date(); // Controla qual semana está na tela
 
 // === CONFIGURAÇÃO DO BANCO DE DADOS NA NUVEM (GITHUB) ===
 // As credenciais ficam no arquivo config.js (que não vai para o GitHub)
@@ -90,18 +94,84 @@ async function salvarBancoDeDados() {
 }
 
 // ==========================================
-// A Lógica do Kanban continua igual!
+// LÓGICA DO CALENDÁRIO E DATAS
+// ==========================================
+
+// Pega a segunda-feira da semana da data fornecida
+function obterSegundaFeira(data) {
+    const d = new Date(data);
+    const dia = d.getDay();
+    const diff = d.getDate() - dia + (dia === 0 ? -6 : 1); // ajusta se for domingo
+    return new Date(d.setDate(diff));
+}
+
+// Formata para salvar no banco: YYYY-MM-DD
+function formatarDataIso(data) {
+    const ano = data.getFullYear();
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    const dia = String(data.getDate()).padStart(2, '0');
+    return `${ano}-${mes}-${dia}`;
+}
+
+// Formata para mostrar na tela: "Segunda, 25/05"
+function formatarDataExibicao(data) {
+    const opcoesDia = { weekday: 'long' };
+    let nomeDia = data.toLocaleDateString('pt-BR', opcoesDia);
+    nomeDia = nomeDia.charAt(0).toUpperCase() + nomeDia.split('-')[0].slice(1);
+    
+    const dia = String(data.getDate()).padStart(2, '0');
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    return `${nomeDia}, ${dia}/${mes}`;
+}
+
+// Migrar dados antigos (Ex: "Segunda") para datas reais
+function migrarTarefasAntigas() {
+    let alterou = false;
+    const segundaFeira = obterSegundaFeira(new Date());
+    
+    const mapaDias = { "Segunda": 0, "Terça": 1, "Quarta": 2, "Quinta": 3, "Sexta": 4, "Sábado": 5, "Domingo": 6 };
+    
+    tarefas.forEach(tarefa => {
+        if (mapaDias[tarefa.dia] !== undefined) {
+            const novaData = new Date(segundaFeira);
+            novaData.setDate(segundaFeira.getDate() + mapaDias[tarefa.dia]);
+            tarefa.dia = formatarDataIso(novaData);
+            alterou = true;
+        }
+    });
+    
+    if (alterou) salvarBancoDeDados();
+}
+
+// ==========================================
+// A Lógica do Kanban com Datas
 // ==========================================
 function renderizarTarefas() {
+    migrarTarefasAntigas();
     daysContainer.innerHTML = ''; 
 
-    ORDEM_DIAS.forEach(diaDaSemana => {
+    const segundaFeira = obterSegundaFeira(dataAtualVisivel);
+    const domingo = new Date(segundaFeira);
+    domingo.setDate(segundaFeira.getDate() + 6);
+    
+    // Atualiza o título da semana
+    tituloSemana.innerText = `Semana de ${String(segundaFeira.getDate()).padStart(2, '0')}/${String(segundaFeira.getMonth()+1).padStart(2, '0')} a ${String(domingo.getDate()).padStart(2, '0')}/${String(domingo.getMonth()+1).padStart(2, '0')}`;
+    
+    // Sincroniza o input de data
+    inputEscolherData.value = formatarDataIso(dataAtualVisivel);
+
+    // Gera as 7 colunas da semana
+    for (let i = 0; i < 7; i++) {
+        const dataColuna = new Date(segundaFeira);
+        dataColuna.setDate(segundaFeira.getDate() + i);
+        const dataIsoString = formatarDataIso(dataColuna);
+        
         const dayBlock = document.createElement('div');
         dayBlock.className = 'day-block';
 
         const dayHeader = document.createElement('div');
         dayHeader.className = 'day-header';
-        dayHeader.innerText = diaDaSemana;
+        dayHeader.innerText = formatarDataExibicao(dataColuna);
         dayBlock.appendChild(dayHeader);
 
         // Eventos de Drag and Drop para a Coluna (Recebedora)
@@ -128,14 +198,14 @@ function renderizarTarefas() {
             const idTarefa = e.dataTransfer.getData('text/plain');
             const tarefaMovida = tarefas.find(t => t.id === idTarefa);
             
-            if (tarefaMovida && tarefaMovida.dia !== diaDaSemana) {
-                tarefaMovida.dia = diaDaSemana;
+            if (tarefaMovida && tarefaMovida.dia !== dataIsoString) {
+                tarefaMovida.dia = dataIsoString;
                 renderizarTarefas();
                 salvarBancoDeDados();
             }
         });
 
-        const tarefasDoDia = tarefas.filter(tarefa => tarefa.dia === diaDaSemana);
+        const tarefasDoDia = tarefas.filter(tarefa => tarefa.dia === dataIsoString);
 
         const ul = document.createElement('ul');
         ul.className = 'task-list';
@@ -187,18 +257,18 @@ function renderizarTarefas() {
         input.type = 'text';
         input.className = 'column-input';
         input.placeholder = '+ Nova tarefa...';
-        input.id = `input-${diaDaSemana}`; 
+        input.id = `input-${dataIsoString}`; 
         
         input.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
-                adicionarTarefa(diaDaSemana);
+                adicionarTarefa(dataIsoString);
             }
         });
 
         const btn = document.createElement('button');
         btn.className = 'column-btn';
         btn.innerHTML = '<i class="fas fa-plus"></i>';
-        btn.onclick = () => adicionarTarefa(diaDaSemana);
+        btn.onclick = () => adicionarTarefa(dataIsoString);
 
         inputArea.appendChild(input);
         inputArea.appendChild(btn);
@@ -206,7 +276,7 @@ function renderizarTarefas() {
         dayBlock.appendChild(inputArea);
 
         daysContainer.appendChild(dayBlock);
-    });
+    }
 }
 
 function adicionarTarefa(diaDaSemana) {
@@ -244,6 +314,28 @@ function deletarTarefa(id) {
     renderizarTarefas();
     salvarBancoDeDados();
 }
+
+// ==========================================
+// EVENTOS DOS BOTÕES DO CALENDÁRIO
+// ==========================================
+btnSemanaAnterior.addEventListener('click', () => {
+    dataAtualVisivel.setDate(dataAtualVisivel.getDate() - 7);
+    renderizarTarefas();
+});
+
+btnProximaSemana.addEventListener('click', () => {
+    dataAtualVisivel.setDate(dataAtualVisivel.getDate() + 7);
+    renderizarTarefas();
+});
+
+inputEscolherData.addEventListener('change', (e) => {
+    if (e.target.value) {
+        // Usa UTC para evitar problemas de fuso horário ao criar a data do input
+        const [ano, mes, dia] = e.target.value.split('-');
+        dataAtualVisivel = new Date(ano, mes - 1, dia);
+        renderizarTarefas();
+    }
+});
 
 // Ao iniciar, puxamos os dados da nuvem!
 carregarBancoDeDados();
