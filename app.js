@@ -8,6 +8,35 @@ let tarefas = [];
 const GITHUB_TOKEN = CONFIG.GITHUB_TOKEN;
 const GIST_ID = CONFIG.GIST_ID;
 
+// === RELÓGIO EM TEMPO REAL ===
+function atualizarRelogio() {
+    const relogioContainer = document.getElementById('relogioContainer');
+    if (!relogioContainer) return;
+
+    const agora = new Date();
+    const opcoes = { 
+        timeZone: 'America/Sao_Paulo',
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit'
+    };
+    
+    // Formata a data e hora para o formato brasileiro
+    let dataFormatada = agora.toLocaleString('pt-BR', opcoes);
+    // Capitaliza a primeira letra
+    dataFormatada = dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
+    
+    relogioContainer.innerText = dataFormatada;
+}
+
+// Inicia o relógio e atualiza a cada segundo
+setInterval(atualizarRelogio, 1000);
+atualizarRelogio();
+
 // Função para buscar os dados na nuvem quando o app abre
 async function carregarBancoDeDados() {
     try {
@@ -75,6 +104,37 @@ function renderizarTarefas() {
         dayHeader.innerText = diaDaSemana;
         dayBlock.appendChild(dayHeader);
 
+        // Eventos de Drag and Drop para a Coluna (Recebedora)
+        dayBlock.addEventListener('dragover', (e) => {
+            e.preventDefault(); // Necessário para permitir o drop
+        });
+
+        dayBlock.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            dayBlock.classList.add('drag-over');
+        });
+
+        dayBlock.addEventListener('dragleave', (e) => {
+            // Remove a classe se o mouse sair da coluna
+            if (!dayBlock.contains(e.relatedTarget)) {
+                dayBlock.classList.remove('drag-over');
+            }
+        });
+
+        dayBlock.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dayBlock.classList.remove('drag-over');
+            
+            const idTarefa = e.dataTransfer.getData('text/plain');
+            const tarefaMovida = tarefas.find(t => t.id === idTarefa);
+            
+            if (tarefaMovida && tarefaMovida.dia !== diaDaSemana) {
+                tarefaMovida.dia = diaDaSemana;
+                renderizarTarefas();
+                salvarBancoDeDados();
+            }
+        });
+
         const tarefasDoDia = tarefas.filter(tarefa => tarefa.dia === diaDaSemana);
 
         const ul = document.createElement('ul');
@@ -84,6 +144,19 @@ function renderizarTarefas() {
             tarefasDoDia.forEach(tarefa => {
                 const li = document.createElement('li');
                 li.className = `task-item ${tarefa.concluida ? 'completed' : ''}`;
+                
+                // Torna a tarefa arrastável
+                li.setAttribute('draggable', 'true');
+                
+                // Eventos de Drag para a Tarefa
+                li.addEventListener('dragstart', (e) => {
+                    li.classList.add('dragging');
+                    e.dataTransfer.setData('text/plain', tarefa.id);
+                });
+                
+                li.addEventListener('dragend', () => {
+                    li.classList.remove('dragging');
+                });
 
                 li.innerHTML = `
                     <span class="task-content">${tarefa.texto}</span>
